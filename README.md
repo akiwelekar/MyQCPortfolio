@@ -14,7 +14,7 @@ This repository showcases hands-on problem solving using quantum computing. It c
 
 | Problem | Focus Area | Tools Used |
 |--------|-------------|-------------|
-| [01 - Grover's Search](problems/01_grover_search) | Oracle-based Quantum Search | Qiskit |
+| [01 - Grover's Search](groverAlgorithm.ipynb) | Oracle-based Quantum Search | Qiskit |
 | [02 - MaxCut](problems/02_maxcut_dwave) | QUBO, Graph Optimization | D-Wave |
 | [03 - Exam Route Optimization](problems/03_exam_route_optimization) | QUBO, Routing | Qiskit + Annealing |
 | ... | ... | ... |
