@@ -1,0 +1,185 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/akiwelekar/MyQCPortfolio/blob/main/problems/01_grover_search\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YcUK2FJFnGCi",
+        "outputId": "83b7dede-1288-4282-b36a-34a8d3a5bc43"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: qiskit in /usr/local/lib/python3.11/dist-packages (2.1.1)\n",
+            "Requirement already satisfied: rustworkx>=0.15.0 in /usr/local/lib/python3.11/dist-packages (from qiskit) (0.16.0)\n",
+            "Requirement already satisfied: numpy<3,>=1.17 in /usr/local/lib/python3.11/dist-packages (from qiskit) (2.0.2)\n",
+            "Requirement already satisfied: scipy>=1.5 in /usr/local/lib/python3.11/dist-packages (from qiskit) (1.16.0)\n",
+            "Requirement already satisfied: dill>=0.3 in /usr/local/lib/python3.11/dist-packages (from qiskit) (0.3.7)\n",
+            "Requirement already satisfied: stevedore>=3.0.0 in /usr/local/lib/python3.11/dist-packages (from qiskit) (5.4.1)\n",
+            "Requirement already satisfied: typing-extensions in /usr/local/lib/python3.11/dist-packages (from qiskit) (4.14.1)\n",
+            "Requirement already satisfied: matplotlib>=3.3 in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (3.10.0)\n",
+            "Requirement already satisfied: pydot in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (3.0.4)\n",
+            "Requirement already satisfied: Pillow>=4.2.1 in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (11.3.0)\n",
+            "Requirement already satisfied: pylatexenc>=1.4 in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (2.10)\n",
+            "Requirement already satisfied: seaborn>=0.9.0 in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (0.13.2)\n",
+            "Requirement already satisfied: sympy>=1.3 in /usr/local/lib/python3.11/dist-packages (from qiskit[visualization]) (1.13.1)\n",
+            "Requirement already satisfied: contourpy>=1.0.1 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (1.3.2)\n",
+            "Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (0.12.1)\n",
+            "Requirement already satisfied: fonttools>=4.22.0 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (4.59.0)\n",
+            "Requirement already satisfied: kiwisolver>=1.3.1 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (1.4.8)\n",
+            "Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (25.0)\n",
+            "Requirement already satisfied: pyparsing>=2.3.1 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (3.2.3)\n",
+            "Requirement already satisfied: python-dateutil>=2.7 in /usr/local/lib/python3.11/dist-packages (from matplotlib>=3.3->qiskit[visualization]) (2.9.0.post0)\n",
+            "Requirement already satisfied: pandas>=1.2 in /usr/local/lib/python3.11/dist-packages (from seaborn>=0.9.0->qiskit[visualization]) (2.2.2)\n",
+            "Requirement already satisfied: pbr>=2.0.0 in /usr/local/lib/python3.11/dist-packages (from stevedore>=3.0.0->qiskit) (6.1.1)\n",
+            "Requirement already satisfied: mpmath<1.4,>=1.1.0 in /usr/local/lib/python3.11/dist-packages (from sympy>=1.3->qiskit[visualization]) (1.3.0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.11/dist-packages (from pandas>=1.2->seaborn>=0.9.0->qiskit[visualization]) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.11/dist-packages (from pandas>=1.2->seaborn>=0.9.0->qiskit[visualization]) (2025.2)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.11/dist-packages (from pbr>=2.0.0->stevedore>=3.0.0->qiskit) (75.2.0)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.11/dist-packages (from python-dateutil>=2.7->matplotlib>=3.3->qiskit[visualization]) (1.17.0)\n",
+            "Requirement already satisfied: qiskit in /usr/local/lib/python3.11/dist-packages (2.1.1)\n",
+            "Requirement already satisfied: rustworkx>=0.15.0 in /usr/local/lib/python3.11/dist-packages (from qiskit) (0.16.0)\n",
+            "Requirement already satisfied: numpy<3,>=1.17 in /usr/local/lib/python3.11/dist-packages (from qiskit) (2.0.2)\n",
+            "Requirement already satisfied: scipy>=1.5 in /usr/local/lib/python3.11/dist-packages (from qiskit) (1.16.0)\n",
+            "Requirement already satisfied: dill>=0.3 in /usr/local/lib/python3.11/dist-packages (from qiskit) (0.3.7)\n",
+            "Requirement already satisfied: stevedore>=3.0.0 in /usr/local/lib/python3.11/dist-packages (from qiskit) (5.4.1)\n",
+            "Requirement already satisfied: typing-extensions in /usr/local/lib/python3.11/dist-packages (from qiskit) (4.14.1)\n",
+            "Requirement already satisfied: pbr>=2.0.0 in /usr/local/lib/python3.11/dist-packages (from stevedore>=3.0.0->qiskit) (6.1.1)\n",
+            "Requirement already satisfied: setuptools in /usr/local/lib/python3.11/dist-packages (from pbr>=2.0.0->stevedore>=3.0.0->qiskit) (75.2.0)\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install qiskit qiskit[visualization]\n",
+        "!pip install --upgrade qiskit\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 31,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 522
+        },
+        "id": "6C-YRtdAu7mG",
+        "outputId": "24d4a923-c5f8-4516-f37e-34b53acecdc5"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "{'11': 1000}\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<Figure size 640x480 with 1 Axes>"
+            ],
+            "image/png": "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\n"
+          },
+          "metadata": {},
+          "execution_count": 31
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "<Figure size 640x480 with 0 Axes>"
+            ]
+          },
+          "metadata": {}
+        }
+      ],
+      "source": [
+        "from qiskit import QuantumCircuit\n",
+        "from qiskit import transpile\n",
+        "from qiskit_aer import AerSimulator\n",
+        "from qiskit.visualization import plot_histogram\n",
+        "from qiskit.circuit.library import ZGate\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "# Create oracle for target state |11⟩ (decimal 3)\n",
+        "oracle = QuantumCircuit(2)\n",
+        "oracle.cz(0, 1)  # Controlled-Z gate marks |11⟩\n",
+        "oracle_gate = oracle.to_gate()\n",
+        "oracle_gate.name = \"Oracle\"\n",
+        "\n",
+        "# Create diffuser (inversion about mean)\n",
+        "def diffuser(n):\n",
+        "    qc = QuantumCircuit(n)\n",
+        "    qc.h(range(n))\n",
+        "    qc.x(range(n))\n",
+        "    qc.h(n-1)\n",
+        "    qc.mcx(list(range(n-1)), n-1)\n",
+        "    qc.h(n-1)\n",
+        "    qc.x(range(n))\n",
+        "    qc.h(range(n))\n",
+        "    return qc\n",
+        "\n",
+        "diffuser_gate = diffuser(2).to_gate()\n",
+        "diffuser_gate.name = \"Diffuser\"\n",
+        "\n",
+        "# Grover circuit\n",
+        "grover = QuantumCircuit(2, 2)\n",
+        "grover.h([0, 1])          # Step 1: Apply Hadamard\n",
+        "grover.append(oracle_gate, [0, 1])    # Step 2: Oracle\n",
+        "grover.append(diffuser_gate, [0, 1])  # Step 3: Diffuser\n",
+        "grover.measure([0, 1], [0, 1])\n",
+        "\n",
+        "grover.draw()\n",
+        "plt.savefig('grover_circuit.png', bbox_inches='tight')\n",
+        "\n",
+        "\n",
+        "# Simulate\n",
+        "\n",
+        "\n",
+        "backend = AerSimulator()\n",
+        "tqc = transpile(grover, backend)\n",
+        "job = backend.run(tqc, shots=1000)\n",
+        "result = job.result()\n",
+        "counts = result.get_counts(tqc)\n",
+        "print(counts)\n",
+        "\n",
+        "# Visualize\n",
+        "\n",
+        "%matplotlib inline\n",
+        "plot_histogram(counts)"
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMhPSrrSiKQho3c7Ynzuy2d",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
